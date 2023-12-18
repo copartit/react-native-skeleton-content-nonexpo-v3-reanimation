@@ -1,3 +1,4 @@
+# THIS IS A FORK OF [React Native Skeleton Content Nonexpo](https://github.com/alexZajac/react-native-skeleton-content)
 ## React Native Skeleton Content Nonexpo
 
 > This the not-expo dependant version of [this package](https://github.com/alexZajac/react-native-skeleton-content).

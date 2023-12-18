@@ -1,5 +1,5 @@
 {
-  "name": "react-native-skeleton-content-nonexpo",
+  "name": "@l7aromeo/react-native-skeleton-content-nonexpo",
   "version": "1.0.13",
   "description": "A simple and fully customizable React Native component that implements a skeleton-like loader",
   "main": "lib/index.js",
@@ -32,10 +32,18 @@
       "tsx"
     ],
     "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+      "^.+\\.(ts|tsx)?$": [
+        "ts-jest", {
+          "babelConfig": true
+        }
+      ],
+      "^.+\\.(js|jsx)$": "babel-jest"
     },
     "testMatch": [
       "**/*.test.ts?(x)"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-native|react-native-reanimated|@react-native)/)"
     ],
     "coveragePathIgnorePatterns": [
       "./src/__tests__/"
@@ -81,6 +89,7 @@
     "react-native-linear-gradient": "^2.8.3",
     "react-native-reanimated": "^3.6.1",
     "react-test-renderer": "^18.2.0",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
   },
   "author": "Alexandre Zajac",
