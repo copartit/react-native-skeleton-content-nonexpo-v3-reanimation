@@ -77,7 +77,7 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
         const loopConfig = withTiming(animationValue.value === 1 ? 0 : 1,
           shiverValue.value === 1
             ? { duration, easing }
-            : { duration: duration! / 2, easing, boomerang: true }
+            : { duration: duration! / 2, easing }
         );
 
         animationValue.value = loopConfig;
