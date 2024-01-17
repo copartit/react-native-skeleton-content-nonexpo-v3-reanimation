@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
@@ -6,7 +6,7 @@ import Animated, {
   interpolateColor,
   useSharedValue,
   withTiming,
-  withRepeat
+  Easing
 } from 'react-native-reanimated';
 import {
   ICustomViewStyle,
@@ -73,34 +73,39 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
   const [componentSize, onLayout] = useLayout();
 
   useEffect(() => {
-    if (loadingValue.value === 1) {
-      if (shiverValue.value === 1) {
-        animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
-          duration,
-          easing,
-        }), -1, true);
-        const interval = setInterval(() => {
-          animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
+    const startAnimation = () => {
+      if (loadingValue.value === 1) {
+        if (shiverValue.value === 1) {
+          animationValue.value = withTiming(1, {
             duration,
-            easing,
-          }), -1, true);
-        }, 6000);
-        return () => clearInterval(interval);
-      } else {
-        animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
-          duration: duration! / 2,
-          easing,
-        }), -1, true);
-        const interval = setInterval(() => {
-          animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
-            duration: duration! / 2,
-            easing,
-          }), -1, true);
-        }, 6000);
-        return () => clearInterval(interval);
+            easing: Easing.linear, // Or your preferred easing type
+            useNativeDriver: true,
+          });
+        } else {
+          animationValue.value = withTiming(0.5, {
+            duration: duration / 2,
+            easing: Easing.linear,
+            boomerang: true,
+            useNativeDriver: true,
+          });
+        }
       }
-    }
-  }, [loadingValue.value, shiverValue.value, animationValue.value]);
+    };
+    const loopAnimation = () => {
+      // Use a ref to control the loop based on loadingValue
+      const loopRef = useRef(null);
+      loopRef.current = startAnimation;
+      startAnimation();
+      loadingValue.addListener((value) => {
+        if (value === 1) {
+          loopRef.current(); // Restart the loop if loadingValue becomes 1
+        } else {
+          cancelAnimationFrame(loopRef.current); // Stop the loop
+        }
+      });
+    };
+    loopAnimation();
+  }, [loadingValue, shiverValue, duration]);
 
   const getBoneWidth = (boneLayout: ICustomViewStyle): number =>
     (typeof boneLayout.width === 'string'
