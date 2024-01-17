@@ -78,12 +78,26 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
         animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
           duration,
           easing,
-        }), -1, false);
+        }), -1, true);
+        const interval = setInterval(() => {
+          animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
+            duration,
+            easing,
+          }), -1, true);
+        }, 6000);
+        return () => clearInterval(interval);
       } else {
         animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
           duration: duration! / 2,
           easing,
         }), -1, true);
+        const interval = setInterval(() => {
+          animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
+            duration: duration! / 2,
+            easing,
+          }), -1, true);
+        }, 6000);
+        return () => clearInterval(interval);
       }
     }
   }, [loadingValue.value, shiverValue.value, animationValue.value]);
