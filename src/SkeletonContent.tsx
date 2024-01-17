@@ -78,15 +78,12 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
         if (shiverValue.value === 1) {
           animationValue.value = withTiming(1, {
             duration,
-            easing: Easing.linear, // Or your preferred easing type
-            useNativeDriver: true,
+            easing
           });
         } else {
           animationValue.value = withTiming(0.5, {
             duration: duration / 2,
-            easing: Easing.linear,
-            boomerang: true,
-            useNativeDriver: true,
+            easing
           });
         }
       }
