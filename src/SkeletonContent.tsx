@@ -5,8 +5,11 @@ import Animated, {
   interpolate,
   interpolateColor,
   useSharedValue,
-  withTiming,
-  Easing
+  cond,
+  eq,
+  loop,
+  set,
+  block,
 } from 'react-native-reanimated';
 import {
   ICustomViewStyle,
@@ -73,36 +76,26 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
   const [componentSize, onLayout] = useLayout();
 
   useEffect(() => {
-    const startAnimation = () => {
-      if (loadingValue.value === 1) {
-        if (shiverValue.value === 1) {
-          animationValue.value = withTiming(1, {
-            duration,
-            easing
-          });
-        } else {
-          animationValue.value = withTiming(0.5, {
-            duration: duration / 2,
-            easing
-          });
-        }
-      }
-    };
-    const loopAnimation = () => {
-      // Use a ref to control the loop based on loadingValue
-      const loopRef = useRef(null);
-      loopRef.current = startAnimation;
-      startAnimation();
-      loadingValue.addListener((value) => {
-        if (value === 1) {
-          loopRef.current(); // Restart the loop if loadingValue becomes 1
-        } else {
-          cancelAnimationFrame(loopRef.current); // Stop the loop
-        }
-      });
-    };
-    loopAnimation();
-  }, [loadingValue, shiverValue, duration]);
+    const animation = block([
+      cond(eq(loadingValue, 1), [
+        cond(
+          eq(shiverValue, 1),
+          [
+            set(animationValue, loop({ duration, easing })),
+          ],
+          [
+            set(animationValue, loop({ duration: duration / 2, easing, boomerang: true })),
+          ],
+        ),
+      ]),
+    ]);
+
+    // Start the animation
+    animation.start();
+
+    // Cleanup when component unmounts
+    return () => animation.stop();
+  }, [loadingValue, shiverValue, duration, easing]);
 
   const getBoneWidth = (boneLayout: ICustomViewStyle): number =>
     (typeof boneLayout.width === 'string'
