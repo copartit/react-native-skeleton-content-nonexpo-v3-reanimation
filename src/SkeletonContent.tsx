@@ -5,11 +5,7 @@ import Animated, {
   interpolate,
   interpolateColor,
   useSharedValue,
-  cond,
-  eq,
-  loop,
-  set,
-  block,
+  withTiming
 } from 'react-native-reanimated';
 import {
   ICustomViewStyle,
@@ -76,25 +72,23 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
   const [componentSize, onLayout] = useLayout();
 
   useEffect(() => {
-    const animation = block([
-      cond(eq(loadingValue, 1), [
-        cond(
-          eq(shiverValue, 1),
-          [
-            set(animationValue, loop({ duration, easing })),
-          ],
-          [
-            set(animationValue, loop({ duration: duration / 2, easing, boomerang: true })),
-          ],
-        ),
-      ]),
-    ]);
+    const runAnimation = () => {
+      if (loadingValue.value === 1) {
+        const loopConfig = withTiming(
+          shiverValue.value === 1
+            ? { duration, easing }
+            : { duration: duration! / 2, easing, boomerang: true }
+        );
 
-    // Start the animation
-    animation.start();
-
-    // Cleanup when component unmounts
-    return () => animation.stop();
+        animationValue.value = loopConfig;
+      }
+    };
+    runAnimation();
+    // Re-run the animation if any dependency changes
+    return () => {
+      // Clean up animation if necessary
+      // (Might not be needed for simple animations)
+    };
   }, [loadingValue, shiverValue, duration, easing]);
 
   const getBoneWidth = (boneLayout: ICustomViewStyle): number =>
