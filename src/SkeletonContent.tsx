@@ -71,47 +71,18 @@ const SkeletonContent: React.FunctionComponent<ISkeletonContentProps> = ({
 
   const [componentSize, onLayout] = useLayout();
 
-  // useCode(
-  //   () =>
-  //     cond(eq(loadingValue, 1), [
-  //       cond(
-  //         eq(shiverValue, 1),
-  //         [
-  //           set(
-  //             animationValue,
-  //             loop({
-  //               duration,
-  //               easing
-  //             })
-  //           )
-  //         ],
-  //         [
-  //           set(
-  //             animationValue,
-  //             loop({
-  //               duration: duration! / 2,
-  //               easing,
-  //               boomerang: true
-  //             })
-  //           )
-  //         ]
-  //       )
-  //     ]),
-  //   [loadingValue, shiverValue, animationValue]
-  // );
-
   useEffect(() => {
     if (loadingValue.value === 1) {
       if (shiverValue.value === 1) {
-        animationValue.value = withTiming(animationValue.value === 1 ? 0 : 1, {
+        animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
           duration,
           easing,
-        });
+        }), -1, false);
       } else {
-        animationValue.value = withTiming(animationValue.value === 1 ? 0 : 1, {
+        animationValue.value = withRepeat(withTiming(animationValue.value === 1 ? 0 : 1, {
           duration: duration! / 2,
           easing,
-        });
+        }), -1, true);
       }
     }
   }, [loadingValue.value, shiverValue.value, animationValue.value]);
