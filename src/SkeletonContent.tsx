@@ -6,6 +6,7 @@ import Animated, {
   interpolateColor,
   useSharedValue,
   withTiming,
+  withRepeat
 } from 'react-native-reanimated';
 import {
   ICustomViewStyle,
